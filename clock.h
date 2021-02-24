@@ -44,10 +44,6 @@ class Clock {
 			this->readConfigs();
 			this->newTimer(time_left);
 
-			/* Start ncurses screen */
-			initscr();
-			start_color();
-
 			/* Init color pair	*/
 			/* 0 	Empty		*/
 			/* 1 	Hour		*/
@@ -75,7 +71,8 @@ class Clock {
 			this->cur_y = 1;
 			
 			/* Create clock win */
-			this->win = newwin(this->height, this->width, 0, 0);
+			this->win = newwin(this->height, this->width,
+			(LINES - this->height) / 2,(COLS - this->width) / 2);
 
 			/* Draw box */
 			if(options.box)
@@ -89,10 +86,14 @@ class Clock {
 		u_int8_t getHour() {return this->timer.hour;}
 		u_int8_t getMin() {return this->timer.minute;}
 		u_int8_t getSec() {return this->timer.second;}
+		u_int8_t getTimeleft() {return this->timer.time_left;}
+		std::string getFinishMsg() {return this->options.finish_msg;}
+		std::string getFinishSound() {return this->options.finish_sound;}
 		bool finished() {return !this->timer.time_left;}
-		
+
 		void updateTime();
 		void drawClock();
+		void showMessage();
 
 	private:
 		/* Options */
