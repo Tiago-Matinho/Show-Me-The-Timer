@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include <ncurses.h>
 
@@ -171,6 +173,8 @@ class Clock {
 			this->cur_y += 4;
 		}
 };
+
+static bool running = true;
 
 /* Prototypes */
 
