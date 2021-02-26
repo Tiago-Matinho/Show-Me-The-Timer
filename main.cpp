@@ -13,21 +13,21 @@ void Clock::drawClock() {
 	
 	if(this->options.hour) {
 		/* Draw hour numbers */
-		this->drawNumber(this->timer.hour / 10);
-		this->drawNumber(this->timer.hour % 10);
+		this->drawNumber(this->timer.hour / 10, 1);
+		this->drawNumber(this->timer.hour % 10, 1);
 		/* Draw dots */
-		this->drawDots();
+		this->drawDots(4);
 	}
 
 	/* Draw minute numbers */
-	this->drawNumber(this->timer.minute / 10);
-	this->drawNumber(this->timer.minute % 10);
+	this->drawNumber(this->timer.minute / 10, 2);
+	this->drawNumber(this->timer.minute % 10, 2);
 	/* Draw dots */
-	this->drawDots();
+	this->drawDots(5);
 
 	/* Draw second numbers */
-	this->drawNumber(this->timer.second / 10);
-	this->drawNumber(this->timer.second % 10);
+	this->drawNumber(this->timer.second / 10, 3);
+	this->drawNumber(this->timer.second % 10, 3);
 
 	wrefresh(this->win);
 }
@@ -153,7 +153,13 @@ void signal_handler(int signal) {
 int main(int argc, const char** argv) {
 	atexit(cleanup);
 
-	// TODO signal handeling here
+	/* Init signal handler */
+	struct sigaction sig;
+	sig.sa_handler = signal_handler;
+	sig.sa_flags   = 0;
+	sigaction(SIGTERM,  &sig, NULL);
+	sigaction(SIGINT,   &sig, NULL);
+	sigaction(SIGSEGV,  &sig, NULL);
 
 	/* Start ncurses screen */
 	initscr();

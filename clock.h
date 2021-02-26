@@ -18,11 +18,11 @@
 #define MINFRAMEW  34
 #define HOUR_IN_SEC 3600
 #define BG_COLOR COLOR_BLACK
-#define HOUR_COLOR COLOR_YELLOW
+#define HOUR_COLOR COLOR_GREEN
 #define MINUTE_COLOR COLOR_YELLOW
-#define SECOND_COLOR COLOR_YELLOW
-#define HOUR_DOT_COLOR COLOR_YELLOW
-#define MIN_DOT_COLOR COLOR_YELLOW
+#define SECOND_COLOR COLOR_RED
+#define HOUR_DOT_COLOR COLOR_CYAN
+#define MIN_DOT_COLOR COLOR_MAGENTA
 #define FINISH_MSG "~~~ Timer Finished! ~~~\n"
 
 /* Number matrix */
@@ -144,7 +144,11 @@ class Clock {
 			this->timer.second = 0;
 		}
 
-		void drawNumber(u_int8_t n) { // FIXME	Change so that color is also an arg
+		void drawNumber(u_int8_t n, int color) {
+			/* Change color */
+			chtype dotcolor = COLOR_PAIR(color);
+			wbkgdset(this->win, dotcolor);
+
 			int i, sx = this->cur_x, sy = this->cur_y;
 
 			for(i = 0; i < 30; ++i, ++sy) {
@@ -155,7 +159,7 @@ class Clock {
 
 				wattroff(this->win, A_BLINK);
 
-				wbkgdset(this->win, COLOR_PAIR(number[n][i/2]));
+				wbkgdset(this->win, number[n][i/2]? dotcolor : COLOR_PAIR(0));
 				mvwaddch(this->win, sx, sy, ' ');
 			}
 
@@ -163,10 +167,12 @@ class Clock {
 			this->cur_y += 7;
 		}
 
-		void drawDots() {	 // FIXME	Change so that color is also an arg
-			chtype dotcolor = COLOR_PAIR(1);
-			/* 2 dot for number separation */
+		void drawDots(int color) {
+			/* Change color */
+			chtype dotcolor = COLOR_PAIR(color);
 			wbkgdset(this->win, dotcolor);
+
+			/* 2 dot for number separation */
 			this->cur_y++;
 			mvwaddstr(this->win, 2, this->cur_y, "  ");
 			mvwaddstr(this->win, 4, this->cur_y, "  ");
