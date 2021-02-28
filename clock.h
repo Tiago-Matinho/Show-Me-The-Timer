@@ -7,23 +7,25 @@
 #include <string.h>
 #include <signal.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <thread>
 
 #include <ncurses.h>
 
 /* Macros */
-#define ITOA(i) (i-'0')
+#define STR_TO_BOOL(str) (str.compare("true") == 0)
 #define HOURFRAMEW  54
 #define MINFRAMEW  34
 #define HOUR_IN_SEC 3600
 #define BG_COLOR COLOR_BLACK
-#define HOUR_COLOR COLOR_GREEN
+#define HOUR_COLOR COLOR_YELLOW
 #define MINUTE_COLOR COLOR_YELLOW
-#define SECOND_COLOR COLOR_RED
-#define HOUR_DOT_COLOR COLOR_CYAN
-#define MIN_DOT_COLOR COLOR_MAGENTA
+#define SECOND_COLOR COLOR_YELLOW
+#define HOUR_DOT_COLOR COLOR_YELLOW
+#define MIN_DOT_COLOR COLOR_YELLOW
 #define FINISH_MSG "~~~ Timer Finished! ~~~\n"
+#define CONFIG_FILENAME ".conf"
 
 /* Number matrix */
 const bool number[][15] = {
@@ -124,7 +126,38 @@ class Clock {
 		int height, width, cur_x, cur_y; /* x -> vertical y -> horizontal */
 		WINDOW* win;
 		
-		void readConfigs() { // TODO	add the ability to read config file
+	void trim(std::string& str) {
+		int i, j;
+		for(i = 0; i < (int) str.size(); i++)
+			if(str[i] != ' ')
+				break;
+		
+		for(j = (int) str.size() - 1; j > i; j--)
+			if(str[j] != ' ')
+				break;
+		
+		str = str.substr(i, j + 1);
+	}
+
+	int color(const std::string& str) {
+		if(str.compare("black") == 0)
+			return COLOR_BLACK;
+		else if(str.compare("red") == 0)
+			return COLOR_RED;
+		else if(str.compare("green") == 0)
+			return COLOR_GREEN;
+		else if(str.compare("yellow") == 0)
+			return COLOR_YELLOW;
+		else if(str.compare("blue") == 0)
+			return COLOR_BLUE;
+		else if(str.compare("magenta") == 0)
+			return COLOR_MAGENTA;
+		else if(str.compare("cyan") == 0)
+			return COLOR_CYAN;
+		return 0;
+	}
+
+		void readConfigs() {
 			this->options.box = true;
 			this->options.hour = false;
 			this->options.bg_color = BG_COLOR;
@@ -135,6 +168,36 @@ class Clock {
 			this->options.min_dot_color = MIN_DOT_COLOR;
 			this->options.finish_msg = FINISH_MSG;
 			this->options.finish_sound = "";
+
+			std::ifstream conf_file(CONFIG_FILENAME, std::ifstream::in);
+			char delim = '=';
+			std::string param, value;
+
+			while(conf_file.good()) {
+				std::getline(conf_file, param, delim);
+				std::getline(conf_file, value);
+				trim(param);
+				trim(value);
+
+				if(param.compare("box") == 0)
+					this->options.box = STR_TO_BOOL(value);
+				else if(param.compare("bg_color") == 0)
+					this->options.bg_color = color(value);
+				else if(param.compare("hour_color") == 0)
+					this->options.hour_color = color(value);
+				else if(param.compare("minute_color") == 0)
+					this->options.minute_color = color(value);
+				else if(param.compare("second_color") == 0)
+					this->options.second_color = color(value);
+				else if(param.compare("hour_dot_color") == 0)
+					this->options.hour_dot_color = color(value);
+				else if(param.compare("min_dot_color") == 0)
+					this->options.min_dot_color = color(value);
+				else if(param.compare("finish_msg") == 0)
+					this->options.finish_msg = value;
+				else if(param.compare("finish_sound") == 0)
+					this->options.finish_sound = value;
+			}
 		}
 		
 		void newTimer(u_int32_t time_left) {
@@ -181,7 +244,5 @@ class Clock {
 };
 
 static bool running = true;
-
-/* Prototypes */
 
 #endif

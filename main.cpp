@@ -135,7 +135,7 @@ void stop_timer() {
 void signal_handler(int signal) {
 	switch(signal) {
 		case SIGINT:
-     	case SIGTERM:
+	 	case SIGTERM:
 		 	running = false;
 			break;
 
@@ -156,10 +156,10 @@ int main(int argc, const char** argv) {
 	/* Init signal handler */
 	struct sigaction sig;
 	sig.sa_handler = signal_handler;
-	sig.sa_flags   = 0;
-	sigaction(SIGTERM,  &sig, NULL);
-	sigaction(SIGINT,   &sig, NULL);
-	sigaction(SIGSEGV,  &sig, NULL);
+	sig.sa_flags = 0;
+	sigaction(SIGTERM, &sig, NULL);
+	sigaction(SIGINT, &sig, NULL);
+	sigaction(SIGSEGV, &sig, NULL);
 
 	/* Start ncurses screen */
 	initscr();
