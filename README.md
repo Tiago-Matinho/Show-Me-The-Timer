@@ -2,6 +2,16 @@
 
 Simple program using ncurses lib to display a digital timer.
 
+## Compiling
+`bash
+make
+`
+
+## Runnig
+`bash
+timer
+`
+
 ![setting-the-timer](https://github.com/Tiago-Matinho/Show-Me-The-Timer/blob/main/screenshots/set_timer.png)
 ![timer](https://github.com/Tiago-Matinho/Show-Me-The-Timer/blob/main/screenshots/timer.png)
 
