@@ -1,3 +1,5 @@
 timer
 *.gch
-
+*_copy.h
+*_copy.cpp
+.vscode
