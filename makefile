@@ -2,4 +2,4 @@ all:
 	g++ main.cpp clock.h -lncurses -pthread -Wall -o timer
 
 clean:
-	rm -rf *.gch a.out
+	rm -rf *.gch timer
