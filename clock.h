@@ -25,7 +25,7 @@
 #define HOUR_DOT_COLOR COLOR_YELLOW
 #define MIN_DOT_COLOR COLOR_YELLOW
 #define FINISH_MSG "~~~ Timer Finished! ~~~\n"
-#define CONFIG_FILENAME ".conf"
+#define CONFIG_FILENAME "/.config/timer/.conf"
 
 /* Number matrix */
 const bool number[][15] = {
@@ -126,20 +126,26 @@ class Clock {
 		int height, width, cur_x, cur_y; /* x -> vertical y -> horizontal */
 		WINDOW* win;
 		
-	void trim(std::string& str) {
-		int i, j;
-		for(i = 0; i < (int) str.size(); i++)
-			if(str[i] != ' ')
-				break;
-		
-		for(j = (int) str.size() - 1; j > i; j--)
-			if(str[j] != ' ')
-				break;
-		
-		str = str.substr(i, j + 1);
-	}
+		void trim(std::string& str) {
+			int i = 0, j = str.size() - 1;
 
-	int color(const std::string& str) {
+			while(j > i) {
+				if(str[i] == ' ')
+					i++;
+			
+				if(str[j] == ' ')
+					j--;
+					
+				if(str[i] != ' ' && str[j] != ' ') {
+					str = str.substr(i, j + 1);
+					return;
+				}
+			}
+			
+			str = str.substr(i, j);
+		}
+
+		int color(const std::string& str) {
 		if(str.compare("black") == 0)
 			return COLOR_BLACK;
 		else if(str.compare("red") == 0)
@@ -169,7 +175,9 @@ class Clock {
 			this->options.finish_msg = FINISH_MSG;
 			this->options.finish_sound = "";
 
-			std::ifstream conf_file(CONFIG_FILENAME, std::ifstream::in);
+			char* file_path = strcat(getenv("HOME"), CONFIG_FILENAME);
+
+			std::ifstream conf_file(file_path, std::ifstream::in);
 			char delim = '=';
 			std::string param, value;
 
