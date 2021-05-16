@@ -1,47 +1,5 @@
 #include "clock.h"
 
-void Clock::updateTime() {
-	this->timer.hour = this->timer.time_left / 3600;
-	this->timer.minute = (this->timer.time_left % 3600) / 60;
-	this->timer.second = this->timer.time_left % 60;
-
-	this->timer.time_left--;
-}
-
-void Clock::drawClock() {
-	this->cur_y = 1;
-	
-	if(this->options.hour) {
-		/* Draw hour numbers */
-		this->drawNumber(this->timer.hour / 10, 1);
-		this->drawNumber(this->timer.hour % 10, 1);
-		/* Draw dots */
-		this->drawDots(4);
-	}
-
-	/* Draw minute numbers */
-	this->drawNumber(this->timer.minute / 10, 2);
-	this->drawNumber(this->timer.minute % 10, 2);
-	/* Draw dots */
-	this->drawDots(5);
-
-	/* Draw second numbers */
-	this->drawNumber(this->timer.second / 10, 3);
-	this->drawNumber(this->timer.second % 10, 3);
-
-	wrefresh(this->win);
-}
-
-void Clock::showMessage() {
-	const char* str = this->options.finish_msg.c_str();
-
-	clear();
-	mvprintw(LINES / 2, (COLS - strlen(str))/2,"%s", str);
-	refresh();
-
-	getch();
-}
-
 u_int32_t menu() {
 	WINDOW* menuwin = newwin(7, 20, (LINES - 7) / 2, (COLS - 20) / 2);
 	box(menuwin, 0, 0);
@@ -117,9 +75,7 @@ u_int32_t menu() {
 	return timer[0] * 3600 + timer[1] * 60 + timer[2];
 }
 
-void cleanup() {
-	endwin();
-}
+void cleanup() { endwin(); }
 
 void stop_timer() {
 	char c = 0;
